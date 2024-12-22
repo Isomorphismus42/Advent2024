@@ -192,8 +192,46 @@ def part1():
     return sum(secret_numbers)
 
 
-# def part2():
+def part2():
+    all_prices = []
+    all_changes = []
+    for secret_number in secret_numbers_start:
+        prices = []
+        changes = []
+        old_price = 0
+        for i in range(2000):
+            secret_number = mix(secret_number << 6, secret_number)
+            secret_number = prune(secret_number)
+            secret_number = mix(secret_number >> 5, secret_number)
+            secret_number = prune(secret_number)
+            secret_number = mix(secret_number << 11, secret_number)
+            secret_number = prune(secret_number)
+            price = secret_number % 10
+            prices.append(price)
+            changes.append(old_price - price)
+            old_price = price
+        all_prices.append(prices)
+        all_changes.append(changes)
+
+    all_sequences = []
+    for j, change_list in enumerate(all_changes):
+        sequence_price_dict = {}
+        for i, change in enumerate(change_list[3:]):
+            sequence = (change_list[i], change_list[i + 1], change_list[i + 2], change)
+            if sequence not in sequence_price_dict:
+                sequence_price_dict[sequence] = all_prices[j][i + 3]
+        all_sequences.append(sequence_price_dict)
+
+    sequence_max_price_dict = all_sequences[0]
+    for sequence_price_dict in all_sequences[1:]:
+        for sequence, price in sequence_price_dict.items():
+            if sequence in sequence_max_price_dict:
+                sequence_max_price_dict[sequence] += price
+            else:
+                sequence_max_price_dict[sequence] = price
+
+    return max(sequence_max_price_dict.values())
 
 
 if __name__ == "__main__":
-    print(part1())
+    print(part2())
