@@ -178,16 +178,21 @@ def prune(secret_number):
     return secret_number % 16777216
 
 
+def oneStep(secret_number):
+    secret_number = mix(secret_number << 6, secret_number)
+    secret_number = prune(secret_number)
+    secret_number = mix(secret_number >> 5, secret_number)
+    secret_number = prune(secret_number)
+    secret_number = mix(secret_number << 11, secret_number)
+    secret_number = prune(secret_number)
+    return secret_number
+
+
 def part1():
     secret_numbers = []
     for secret_number in secret_numbers_start:
         for i in range(2000):
-            secret_number = mix(secret_number << 6, secret_number)
-            secret_number = prune(secret_number)
-            secret_number = mix(secret_number >> 5, secret_number)
-            secret_number = prune(secret_number)
-            secret_number = mix(secret_number << 11, secret_number)
-            secret_number = prune(secret_number)
+            secret_number = oneStep(secret_number)
         secret_numbers.append(secret_number)
     return sum(secret_numbers)
 
@@ -200,12 +205,7 @@ def part2():
         changes = []
         old_price = 0
         for i in range(2000):
-            secret_number = mix(secret_number << 6, secret_number)
-            secret_number = prune(secret_number)
-            secret_number = mix(secret_number >> 5, secret_number)
-            secret_number = prune(secret_number)
-            secret_number = mix(secret_number << 11, secret_number)
-            secret_number = prune(secret_number)
+            secret_number = oneStep(secret_number)
             price = secret_number % 10
             prices.append(price)
             changes.append(old_price - price)
